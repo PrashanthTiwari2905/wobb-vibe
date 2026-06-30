@@ -5,7 +5,7 @@ import { PlatformFilter } from "@/components/PlatformFilter";
 import { ProfileList } from "@/components/ProfileList";
 import { extractProfiles, filterProfiles } from "@/utils/dataHelpers";
 
-export function SearchPage() {
+export function SearchPage(): JSX.Element {
   const platform = useAppStore((state) => state.platform);
   const setPlatform = useAppStore((state) => state.setPlatform);
   const searchQuery = useAppStore((state) => state.searchQuery);
@@ -13,10 +13,6 @@ export function SearchPage() {
 
   const allProfiles = extractProfiles(platform);
   const filtered = filterProfiles(allProfiles, searchQuery);
-
-  const handleProfileClick = (username: string) => {
-    console.log("Clicked profile:", username);
-  };
 
   return (
     <Layout title="Discover Creators">
@@ -44,7 +40,7 @@ export function SearchPage() {
       <ProfileList
         profiles={filtered}
         platform={platform}
-        onProfileClick={handleProfileClick}
+        onProfileClick={() => {}}
       />
     </Layout>
   );

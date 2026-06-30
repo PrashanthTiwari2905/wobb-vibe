@@ -1,40 +1,26 @@
-import { useEffect, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { VerifiedBadge } from "@/components/VerifiedBadge";
-import type { FullUserProfile, ProfileDetailResponse } from "@/types";
+import type { FullUserProfile } from "@/types";
 import { formatEngagementRate, formatFollowers } from "@/utils/formatters";
-import { loadProfileByUsername } from "@/utils/profileLoader";
 import { extractProfiles } from "@/utils/dataHelpers";
 import { useAppStore } from "@/store/useAppStore";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Spinner } from "@/components/ui/Spinner";
+import { useProfile } from "@/hooks/useProfile";
 
-export function ProfileDetailPage() {
+export function ProfileDetailPage(): JSX.Element {
   const { username } = useParams<{ username: string }>();
   const [searchParams] = useSearchParams();
   const platform = searchParams.get("platform") || "unknown";
-  const [profileData, setProfileData] = useState<ProfileDetailResponse | null>(
-    null
-  );
-  const [loaded, setLoaded] = useState(false);
+  
+  const { profileData, loaded } = useProfile(username);
+  
   const addToList = useAppStore((state) => state.addToList);
   const removeFromList = useAppStore((state) => state.removeFromList);
   const shortlistedProfiles = useAppStore((state) => state.shortlistedProfiles);
-
-  useEffect(() => {
-    if (!username) return;
-
-    // Optional simulated delay to showcase loading state
-    const delay = new Promise(res => setTimeout(res, 500));
-    
-    Promise.all([loadProfileByUsername(username), delay]).then(([data]) => {
-      setProfileData(data);
-      setLoaded(true);
-    });
-  }, [username]);
 
   if (!username) {
     return (
