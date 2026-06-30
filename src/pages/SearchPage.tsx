@@ -1,4 +1,4 @@
-import { useState } from "react";
+
 import { useAppStore } from "@/store/useAppStore";
 import { Layout } from "@/components/Layout";
 import { PlatformFilter } from "@/components/PlatformFilter";
@@ -10,17 +10,12 @@ export function SearchPage() {
   const setPlatform = useAppStore((state) => state.setPlatform);
   const searchQuery = useAppStore((state) => state.searchQuery);
   const setSearchQuery = useAppStore((state) => state.setSearchQuery);
-  const [clickCount, setClickCount] = useState(0);
 
   const allProfiles = extractProfiles(platform);
   const filtered = filterProfiles(allProfiles, searchQuery);
 
   const handleProfileClick = (username: string) => {
-    setClickCount((prev) => {
-      const next = prev + 1;
-      console.log("Clicked profile:", username, "total clicks:", next);
-      return next;
-    });
+    console.log("Clicked profile:", username);
   };
 
   return (
@@ -49,7 +44,6 @@ export function SearchPage() {
       <ProfileList
         profiles={filtered}
         platform={platform}
-        searchQuery={searchQuery}
         onProfileClick={handleProfileClick}
       />
     </Layout>

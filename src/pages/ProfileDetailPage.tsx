@@ -81,7 +81,7 @@ export function ProfileDetailPage() {
   let displayFollowers = user.followers;
   const isValidPlatform = platform === "instagram" || platform === "youtube" || platform === "tiktok";
   if (isValidPlatform) {
-    const searchProfiles = extractProfiles(platform as any);
+    const searchProfiles = extractProfiles(platform as "instagram" | "youtube" | "tiktok");
     const searchProfile = searchProfiles.find(
       (p) => p.user_id === user.user_id || (p.username && p.username === user.username)
     );
