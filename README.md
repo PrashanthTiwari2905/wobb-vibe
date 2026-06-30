@@ -1,80 +1,61 @@
-# Wobb Frontend Assignment
+# Influencer Discovery Platform - Refactor & Modernization
 
-A starter influencer search application built with **React**, **TypeScript**, **Vite**, and **Tailwind CSS**. This project is intentionally left in a rough-but-working state for candidates to improve.
+This repository contains a comprehensive refactor of an Influencer Discovery React application. The objective of this assignment was to audit an existing broken codebase, resolve critical bugs, implement missing features, modernize the UI, and heavily optimize the application for both code quality and rendering performance.
 
-## Getting Started
+## What Was Changed & Why
 
-```bash
-npm install
-npm run dev
-```
+### 1. Critical Bug Fixes
+- **Safe Filtering**: Fixed a crash occurring when filtering YouTube profiles by adding safe-guards in `filterProfiles` against `undefined` fields.
+- **Data Normalization (Engagement Rate)**: Resolved `NaN` rendering issues on specific profile pages by safely defaulting missing metrics (like `posts_count` or `followers`) and conditionally rendering statistics.
+- **Data Parity**: Fixed the mismatched follower count bug between the dashboard and profile detail pages by unifying the underlying data-lookup logic for consistency.
 
-Open [http://localhost:5173](http://localhost:5173) to view the app.
+### 2. State Management Setup (Zustand)
+- The original codebase relied entirely on localized `useState` passing props deep down the tree. 
+- Introduced a centralized store using **Zustand** to manage global state: `platform` filters, `searchQuery`, and `shortlistedProfiles`. This eliminated prop drilling and established a scalable foundation for global state.
 
-## What's Included
+### 3. "Add to List" Feature
+- Wired up functional "Add/Remove from List" buttons on both the profile cards and profile detail pages.
+- Leveraged the Zustand store to hold shortlisted profiles uniquely (preventing duplicates).
+- Created a dedicated `/shortlist` route equipped with a clean empty-state fallback to view selected creators.
 
-- **Search / Dashboard** — filter influencers by platform (Instagram, YouTube, TikTok) and search by username or full name
-- **Profile Details** — click a profile to view extended data loaded from individual JSON files
-- **Routing** — `react-router-dom` with `/` (search) and `/profile/:username` (details)
+### 4. SaaS UI Redesign
+- Completely modernized the aesthetic using a responsive grid system and **Tailwind CSS**.
+- Extracted and built a library of reusable UI primitives (`Button`, `Card`, `Badge`, `Input`, `Spinner`, `EmptyState`) to establish a clean, consistent, and highly accessible SaaS appearance.
+- Swapped out rigid, hardcoded pixel dimensions for fluid breakpoints (`sm:`, `md:`, `lg:`).
 
-Sample data lives in:
+### 5. Code Quality & Performance Improvements
+- **Extracted Hooks**: Moved heavy data-fetching logic (`useEffect`, loading/error states) out of `ProfileDetailPage.tsx` into a reusable `useProfile.ts` hook.
+- **Strict TypeScript**: Removed implicit `any` types, added explicit return types, and removed dead code/unused imports.
+- **Rendering Optimizations**: 
+  - Wrapped `ProfileCard` and `ProfileList` in `React.memo` to prevent unnecessary list re-renders.
+  - Used `useMemo` for the heavy `filterProfiles` computation to ensure it only runs when the search query or platform changes.
+  - Used `useCallback` to stabilize event handlers passed down to memoized children.
 
-- `src/assets/data/search/` — platform search results (10 profiles each)
-- `src/assets/data/profiles/` — detailed profile JSON per username
+---
 
-## How to Submit
+## Libraries Added
 
-1. **Download or clone** this starter project to your machine.
-2. **Create a new repository** on your own GitHub account. Do not fork the original assignment repo — push your work to a repo you own.
-3. Complete the tasks below and push your changes to that repository.
-4. **Share the public GitHub repository URL** with us as your submission.
+- **`zustand`**: Chosen as the global state management solution. Unlike React Context (which requires providers and can trigger widespread cascading re-renders), Zustand provides a highly performant, boilerplate-free API that hooks directly into components via selectors.
 
-### Deadline (strict)
+---
 
-- **Due:** **2 July 2026, 2:00 PM IST** (Indian Standard Time, UTC+5:30)
-- **Any git commits made after this deadline will disqualify your submission.** We will only consider the repository state as of the deadline; late commits will not be reviewed.
-- Make sure your final work is pushed **before** the cutoff.
+## Assumptions Made
 
-## AI Usage
+- **Data Immutability**: It was assumed the static JSON dataset acts as a mock API. Therefore, simulated network delays were introduced to demonstrate asynchronous loading states (spinners).
+- **Session Persistence**: The "Add to List" functionality was built for in-memory session persistence. It was assumed that persisting to `localStorage` or a database was outside the scope of the immediate assignment requirements.
 
-You may use any AI tools (Cursor, ChatGPT, Claude, GitHub Copilot, etc.). We are evaluating your final solution and engineering decisions.
+---
 
-## Your Tasks
+## Trade-offs
 
-Complete the following as part of your submission:
+- **Client-Side Search vs. Server-Side**: Currently, the application pulls all platform data and performs string-matching and filtering entirely on the client. While perfectly fine for thousands of mocked profiles, a real-world scenario with millions of creators would necessitate pushing this logic to a backend API with proper pagination.
+- **Vite Glob Imports (Code Splitting)**: The profile JSON data is loaded via Vite's `import.meta.glob` which dynamically generates separate JS chunks per profile. While this incredibly optimizes initial page load times (by not bundling megabytes of JSON), it results in many small network requests during fast client-side navigation.
 
-1. **Find and fix all bugs and quality issues** — the codebase contains intentional bugs and quality issues. Identify and resolve them.
+---
 
-2. **Completely redesign the UI/UX** — replace the basic layout with a polished, modern interface. Focus on usability, visual hierarchy, and delight.
+## Remaining Improvements (With More Time)
 
-3. **Replace React Context with Zustand** — when you implement state management for the selected list, use [Zustand](https://github.com/pmndrs/zustand) instead of React Context.
-
-4. **Implement "Select profile & Add to List"** — the disabled "Add to List" button is a stub. Build the full feature:
-   - Select / add profiles to a persistent list
-   - View and manage the selected list
-   - Handle duplicates appropriately
-
-5. **Improve code quality and project structure** — refactor as needed, add proper types, and follow React best practices.
-
-6. **Optimize performance** — apply sensible optimizations where appropriate.
-
-7. **Use any libraries you need** — you are not limited to the current stack. Choose tools that help you deliver a great result (UI kits, state managers, testing libraries, etc.).
-
-## Scripts
-
-| Command        | Description              |
-| -------------- | ------------------------ |
-| `npm run dev`  | Start development server |
-| `npm run build`| Production build         |
-| `npm run lint` | Run ESLint               |
-
-## Submission Notes
-
-- Document any assumptions or trade-offs in your README
-- Ensure `npm run build` passes before submitting
-- Focus on demonstrating your judgment — not every possible feature needs to be built, but the core assignment items should be addressed thoughtfully
-- Double-check that your repo is public (or that we have access) and that the link is included in your submission
-- Please make meaningful commits throughout your work. We may review your commit history.
-- **Bonus:** Deploying the app (e.g. Vercel, Netlify, GitHub Pages) is optional but will be considered a plus — include the live URL in your submission if you do
-
-Good luck!
+1. **List Virtualization**: For massive datasets, implementing `react-window` or `react-virtuoso` on the `ProfileList` would drastically reduce the number of DOM nodes, ensuring perfectly smooth 60fps scrolling regardless of list size.
+2. **Persistent Storage**: Sync the Zustand shortlist state to `localStorage` or `sessionStorage` so user selections survive a hard page refresh.
+3. **Automated Testing**: Introduce **Jest** + **React Testing Library** for unit testing critical utility functions (like `filterProfiles` and `extractProfiles`), and use **Playwright** or **Cypress** to establish E2E tests for the "Add to List" user flow.
+4. **Image Lazy Loading**: Avatar images currently load immediately. Applying `loading="lazy"` on profile images would save significant initial bandwidth when loading the dashboard grid.
