@@ -5,6 +5,7 @@ import { VerifiedBadge } from "@/components/VerifiedBadge";
 import type { FullUserProfile, ProfileDetailResponse } from "@/types";
 import { formatEngagementRate, formatFollowers } from "@/utils/formatters";
 import { loadProfileByUsername } from "@/utils/profileLoader";
+import { extractProfiles } from "@/utils/dataHelpers";
 
 export function ProfileDetailPage() {
   const { username } = useParams<{ username: string }>();
@@ -56,6 +57,18 @@ export function ProfileDetailPage() {
 
   const user: FullUserProfile = profileData.data.user_profile;
 
+  let displayFollowers = user.followers;
+  const isValidPlatform = platform === "instagram" || platform === "youtube" || platform === "tiktok";
+  if (isValidPlatform) {
+    const searchProfiles = extractProfiles(platform as any);
+    const searchProfile = searchProfiles.find(
+      (p) => p.user_id === user.user_id || (p.username && p.username === user.username)
+    );
+    if (searchProfile) {
+      displayFollowers = searchProfile.followers;
+    }
+  }
+
   return (
     <Layout title={user.fullname}>
       <Link to="/" className="text-sm text-blue-600 mb-4 inline-block">
@@ -83,7 +96,7 @@ export function ProfileDetailPage() {
             <div className="border p-2 rounded">
               <div className="text-gray-500">Followers</div>
               <div className="font-semibold">
-                {formatFollowers(user.followers)}
+                {formatFollowers(displayFollowers)}
               </div>
             </div>
             <div className="border p-2 rounded">
