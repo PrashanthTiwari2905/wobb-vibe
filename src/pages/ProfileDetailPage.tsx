@@ -6,6 +6,7 @@ import type { FullUserProfile, ProfileDetailResponse } from "@/types";
 import { formatEngagementRate, formatFollowers } from "@/utils/formatters";
 import { loadProfileByUsername } from "@/utils/profileLoader";
 import { extractProfiles } from "@/utils/dataHelpers";
+import { useAppStore } from "@/store/useAppStore";
 
 export function ProfileDetailPage() {
   const { username } = useParams<{ username: string }>();
@@ -15,6 +16,9 @@ export function ProfileDetailPage() {
     null
   );
   const [loaded, setLoaded] = useState(false);
+  const addToList = useAppStore((state) => state.addToList);
+  const removeFromList = useAppStore((state) => state.removeFromList);
+  const shortlistedProfiles = useAppStore((state) => state.shortlistedProfiles);
 
   useEffect(() => {
     if (!username) return;
@@ -153,14 +157,25 @@ export function ProfileDetailPage() {
             </a>
           )}
 
-          {/* TODO: candidates must implement Add to List feature */}
-          {/* TODO: candidates must implement Add to List feature */}
-          <button
-            disabled
-            className="block mt-4 px-4 py-2 bg-gray-300 text-gray-500 rounded cursor-not-allowed"
-          >
-            Add to List
-          </button>
+          {(() => {
+            const isShortlisted = shortlistedProfiles.some(p => p.user_id === user.user_id);
+            return (
+              <button
+                className={`block mt-4 px-4 py-2 rounded ${
+                  isShortlisted ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'bg-blue-600 text-white hover:bg-blue-700'
+                }`}
+                onClick={() => {
+                  if (isShortlisted) {
+                    removeFromList(user.user_id);
+                  } else {
+                    addToList(user);
+                  }
+                }}
+              >
+                {isShortlisted ? 'Remove from List' : 'Add to List'}
+              </button>
+            );
+          })()}
         </div>
       </div>
     </Layout>
