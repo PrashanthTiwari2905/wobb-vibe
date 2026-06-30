@@ -1,13 +1,15 @@
 import { useState } from "react";
-import type { Platform } from "@/types";
+import { useAppStore } from "@/store/useAppStore";
 import { Layout } from "@/components/Layout";
 import { PlatformFilter } from "@/components/PlatformFilter";
 import { ProfileList } from "@/components/ProfileList";
 import { extractProfiles, filterProfiles } from "@/utils/dataHelpers";
 
 export function SearchPage() {
-  const [platform, setPlatform] = useState<Platform>("instagram");
-  const [searchQuery, setSearchQuery] = useState("");
+  const platform = useAppStore((state) => state.platform);
+  const setPlatform = useAppStore((state) => state.setPlatform);
+  const searchQuery = useAppStore((state) => state.searchQuery);
+  const setSearchQuery = useAppStore((state) => state.setSearchQuery);
   const [clickCount, setClickCount] = useState(0);
 
   const allProfiles = extractProfiles(platform);
