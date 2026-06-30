@@ -24,7 +24,7 @@ export function filterProfiles(
 ): UserProfileSummary[] {
   if (!query) return profiles;
   return profiles.filter((p) => {
-    const matchUsername = p.username.includes(query);
+    const matchUsername = p.username?.toLowerCase().includes(query.toLowerCase()) ?? false;
     const matchFullname = p.fullname?.toLowerCase().includes(query.toLowerCase()) ?? false;
     return matchUsername || matchFullname;
   });
