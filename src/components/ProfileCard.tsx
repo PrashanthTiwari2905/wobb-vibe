@@ -1,3 +1,4 @@
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import type { Platform, UserProfileSummary } from "@/types";
 import { VerifiedBadge } from "./VerifiedBadge";
@@ -12,7 +13,7 @@ interface ProfileCardProps {
   onProfileClick?: (username: string) => void;
 }
 
-export function ProfileCard({
+export const ProfileCard = React.memo(function ProfileCard({
   profile,
   platform,
   onProfileClick,
@@ -76,4 +77,4 @@ export function ProfileCard({
       </div>
     </Card>
   );
-}
+});

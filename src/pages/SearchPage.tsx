@@ -1,4 +1,5 @@
 
+import { useMemo, useCallback } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import { Layout } from "@/components/Layout";
 import { PlatformFilter } from "@/components/PlatformFilter";
@@ -11,8 +12,12 @@ export function SearchPage(): JSX.Element {
   const searchQuery = useAppStore((state) => state.searchQuery);
   const setSearchQuery = useAppStore((state) => state.setSearchQuery);
 
-  const allProfiles = extractProfiles(platform);
-  const filtered = filterProfiles(allProfiles, searchQuery);
+  const allProfiles = useMemo(() => extractProfiles(platform), [platform]);
+  const filtered = useMemo(() => filterProfiles(allProfiles, searchQuery), [allProfiles, searchQuery]);
+
+  const handleProfileClick = useCallback(() => {
+    // Currently a no-op, but stabilized for React.memo
+  }, []);
 
   return (
     <Layout title="Discover Creators">
@@ -40,7 +45,7 @@ export function SearchPage(): JSX.Element {
       <ProfileList
         profiles={filtered}
         platform={platform}
-        onProfileClick={() => {}}
+        onProfileClick={handleProfileClick}
       />
     </Layout>
   );
