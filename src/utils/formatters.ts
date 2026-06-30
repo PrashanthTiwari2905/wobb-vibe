@@ -8,7 +8,7 @@ export function formatFollowers(count: number): string {
   return count.toString();
 }
 
-export function formatEngagementRate(rate: number | undefined): string {
-  if (rate === undefined) return "N/A";
-  return (rate * 100).toFixed(2) + "%";
+export function formatEngagementRate(rate: number | undefined | null): string {
+  if (rate == null || Number.isNaN(Number(rate))) return "N/A";
+  return (Number(rate) * 100).toFixed(2) + "%";
 }
