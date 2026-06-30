@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 
-export function ShortlistPage(): JSX.Element {
+export function ShortlistPage() {
   const shortlistedProfiles = useAppStore((state) => state.shortlistedProfiles);
   const removeFromList = useAppStore((state) => state.removeFromList);
 
