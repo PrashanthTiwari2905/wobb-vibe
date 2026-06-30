@@ -7,6 +7,10 @@ import { formatEngagementRate, formatFollowers } from "@/utils/formatters";
 import { loadProfileByUsername } from "@/utils/profileLoader";
 import { extractProfiles } from "@/utils/dataHelpers";
 import { useAppStore } from "@/store/useAppStore";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { Spinner } from "@/components/ui/Spinner";
 
 export function ProfileDetailPage() {
   const { username } = useParams<{ username: string }>();
@@ -23,7 +27,10 @@ export function ProfileDetailPage() {
   useEffect(() => {
     if (!username) return;
 
-    loadProfileByUsername(username).then((data) => {
+    // Optional simulated delay to showcase loading state
+    const delay = new Promise(res => setTimeout(res, 500));
+    
+    Promise.all([loadProfileByUsername(username), delay]).then(([data]) => {
       setProfileData(data);
       setLoaded(true);
     });
@@ -32,29 +39,39 @@ export function ProfileDetailPage() {
   if (!username) {
     return (
       <Layout>
-        <p>Invalid profile</p>
-        <Link to="/">Back</Link>
+        <EmptyState title="Invalid Profile" description="The profile URL is missing a username." />
+        <div className="mt-4 flex justify-center">
+          <Link to="/">
+            <Button variant="secondary">Back to Search</Button>
+          </Link>
+        </div>
       </Layout>
     );
   }
 
   if (!loaded) {
     return (
-      <Layout title={`@${username}`}>
-        <p className="text-gray-400">Loading...</p>
+      <Layout title="Loading Profile...">
+        <div className="flex flex-col items-center justify-center py-20">
+          <Spinner className="w-10 h-10 mb-4" />
+          <p className="text-gray-500 font-medium">Fetching creator details...</p>
+        </div>
       </Layout>
     );
   }
 
   if (!profileData) {
     return (
-      <Layout title={`@${username}`}>
-        <p className="text-red-600 mb-4">
-          Could not load profile details for {username}
-        </p>
-        <Link to="/" className="text-blue-600 underline">
-          Back to search
-        </Link>
+      <Layout title="Profile Not Found">
+        <EmptyState 
+          title="Could not load profile details" 
+          description={`We couldn't find detailed data for @${username}.`} 
+        />
+        <div className="mt-4 flex justify-center">
+          <Link to="/">
+            <Button variant="secondary">Back to Search</Button>
+          </Link>
+        </div>
       </Layout>
     );
   }
@@ -74,108 +91,114 @@ export function ProfileDetailPage() {
   }
 
   return (
-    <Layout title={user.fullname}>
-      <Link to="/" className="text-sm text-blue-600 mb-4 inline-block">
-        ← Back to search
+    <Layout title="Creator Profile">
+      <Link to="/" className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-brand-600 mb-6 transition-colors">
+        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+        Back to search
       </Link>
 
-      <div className="flex gap-6 items-start text-left max-w-2xl mx-auto">
-        <img
-          src={user.picture}
-          className="w-24 h-24 rounded-full border"
-        />
-        <div className="flex-1">
-          <h2 className="text-xl font-bold">
+      <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Main Info Column */}
+        <Card className="md:col-span-1 p-6 flex flex-col items-center text-center">
+          <img
+            src={user.picture}
+            className="w-32 h-32 rounded-full border-4 border-white shadow-md mb-4"
+          />
+          <h2 className="text-xl font-bold text-gray-900 flex items-center justify-center gap-1 mb-1">
             @{user.username}
             <VerifiedBadge verified={user.is_verified} />
           </h2>
-          <p className="text-gray-600">{user.fullname}</p>
-          <p className="text-xs text-gray-400 mt-1">Platform: {platform}</p>
+          <p className="text-gray-600 font-medium">{user.fullname}</p>
+          <span className="mt-3 px-3 py-1 bg-gray-100 text-gray-600 text-xs font-semibold uppercase tracking-wider rounded-full">
+            {platform}
+          </span>
 
-          {user.description && (
-            <p className="mt-3 text-sm text-gray-700">{user.description}</p>
-          )}
+          <div className="w-full mt-8 flex flex-col gap-3">
+            {user.url && (
+              <a href={user.url} target="_blank" rel="noopener noreferrer" className="w-full">
+                <Button variant="outline" className="w-full">
+                  View on {platform}
+                  <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                </Button>
+              </a>
+            )}
 
-          <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
-            <div className="border p-2 rounded">
-              <div className="text-gray-500">Followers</div>
-              <div className="font-semibold">
-                {formatFollowers(displayFollowers)}
-              </div>
-            </div>
-            <div className="border p-2 rounded">
-              <div className="text-gray-500">Engagement Rate</div>
-              <div className="font-semibold">
-                {formatEngagementRate(user.engagement_rate)}
-              </div>
-            </div>
+            {(() => {
+              const isShortlisted = shortlistedProfiles.some(p => p.user_id === user.user_id);
+              return (
+                <Button
+                  variant={isShortlisted ? "destructive" : "primary"}
+                  className="w-full"
+                  onClick={() => {
+                    if (isShortlisted) {
+                      removeFromList(user.user_id);
+                    } else {
+                      addToList(user);
+                    }
+                  }}
+                >
+                  {isShortlisted ? 'Remove from List' : 'Add to List'}
+                </Button>
+              );
+            })()}
+          </div>
+        </Card>
+
+        {/* Stats Column */}
+        <div className="md:col-span-2 space-y-6">
+          <Card className="p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">About</h3>
+            <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
+              {user.description || "No bio provided."}
+            </p>
+          </Card>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <Card className="p-4 text-center">
+              <div className="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-1">Followers</div>
+              <div className="text-2xl font-bold text-gray-900">{formatFollowers(displayFollowers)}</div>
+            </Card>
+            
+            <Card className="p-4 text-center">
+              <div className="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-1">Engagement Rate</div>
+              <div className="text-2xl font-bold text-gray-900 text-brand-600">{formatEngagementRate(user.engagement_rate)}</div>
+            </Card>
+
             {user.posts_count !== undefined && (
-              <div className="border p-2 rounded">
-                <div className="text-gray-500">Posts</div>
-                <div className="font-semibold">{user.posts_count}</div>
-              </div>
+              <Card className="p-4 text-center">
+                <div className="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-1">Posts</div>
+                <div className="text-2xl font-bold text-gray-900">{user.posts_count}</div>
+              </Card>
             )}
+
             {user.avg_likes !== undefined && (
-              <div className="border p-2 rounded">
-                <div className="text-gray-500">Avg Likes</div>
-                <div className="font-semibold">
-                  {formatFollowers(user.avg_likes)}
-                </div>
-              </div>
+              <Card className="p-4 text-center">
+                <div className="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-1">Avg Likes</div>
+                <div className="text-2xl font-bold text-gray-900">{formatFollowers(user.avg_likes)}</div>
+              </Card>
             )}
+
             {user.avg_comments !== undefined && (
-              <div className="border p-2 rounded">
-                <div className="text-gray-500">Avg Comments</div>
-                <div className="font-semibold">{user.avg_comments}</div>
-              </div>
+              <Card className="p-4 text-center">
+                <div className="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-1">Avg Comments</div>
+                <div className="text-2xl font-bold text-gray-900">{user.avg_comments}</div>
+              </Card>
             )}
+
             {user.avg_views !== undefined && user.avg_views > 0 && (
-              <div className="border p-2 rounded">
-                <div className="text-gray-500">Avg Views</div>
-                <div className="font-semibold">
-                  {formatFollowers(user.avg_views)}
-                </div>
-              </div>
+              <Card className="p-4 text-center">
+                <div className="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-1">Avg Views</div>
+                <div className="text-2xl font-bold text-gray-900">{formatFollowers(user.avg_views)}</div>
+              </Card>
             )}
+            
             {user.engagements !== undefined && (
-              <div className="border p-2 rounded">
-                <div className="text-gray-500">Engagements</div>
-                <div className="font-semibold">
-                  {formatFollowers(user.engagements)}
-                </div>
-              </div>
+              <Card className="p-4 text-center sm:col-span-3">
+                <div className="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-1">Total Engagements</div>
+                <div className="text-2xl font-bold text-gray-900">{formatFollowers(user.engagements)}</div>
+              </Card>
             )}
           </div>
-
-          {user.url && (
-            <a
-              href={user.url}
-              target="_blank"
-              className="inline-block mt-4 text-blue-600 text-sm"
-            >
-              View on platform →
-            </a>
-          )}
-
-          {(() => {
-            const isShortlisted = shortlistedProfiles.some(p => p.user_id === user.user_id);
-            return (
-              <button
-                className={`block mt-4 px-4 py-2 rounded ${
-                  isShortlisted ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'bg-blue-600 text-white hover:bg-blue-700'
-                }`}
-                onClick={() => {
-                  if (isShortlisted) {
-                    removeFromList(user.user_id);
-                  } else {
-                    addToList(user);
-                  }
-                }}
-              >
-                {isShortlisted ? 'Remove from List' : 'Add to List'}
-              </button>
-            );
-          })()}
         </div>
       </div>
     </Layout>
