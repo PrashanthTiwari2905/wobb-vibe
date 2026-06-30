@@ -19,8 +19,9 @@ export function ProfileCard({
   const navigate = useNavigate();
 
   const handleClick = () => {
-    if (onProfileClick) onProfileClick(profile.username);
-    navigate(`/profile/${profile.username}?platform=${platform}`);
+    const identifier = profile.username || profile.user_id;
+    if (onProfileClick) onProfileClick(identifier);
+    navigate(`/profile/${identifier}?platform=${platform}`);
   };
 
   return (
