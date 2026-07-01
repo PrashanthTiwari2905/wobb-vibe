@@ -7,13 +7,11 @@ interface CardProps {
 }
 
 export function Card({ children, className = "", onClick }: CardProps) {
-  const isClickable = !!onClick;
-  
   return (
     <div
       onClick={onClick}
-      className={`bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden ${
-        isClickable ? "cursor-pointer hover:shadow-md hover:border-gray-300 transition-all duration-200" : ""
+      className={`bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-xl overflow-hidden transition-all duration-300 ${
+        onClick ? "cursor-pointer hover:-translate-y-1 hover:bg-white/15 hover:shadow-2xl" : ""
       } ${className}`}
     >
       {children}

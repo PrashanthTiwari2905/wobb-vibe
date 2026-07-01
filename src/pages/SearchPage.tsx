@@ -21,7 +21,7 @@ export function SearchPage() {
 
   return (
     <Layout title="Discover Creators">
-      <p className="text-gray-500 text-lg mb-8 max-w-2xl">
+      <p className="text-slate-300 text-lg mb-10 max-w-2xl font-light leading-relaxed">
         Search and filter through thousands of top influencers across Instagram, YouTube, and TikTok to find the perfect match for your campaign.
       </p>
 
@@ -35,9 +35,9 @@ export function SearchPage() {
         onSearchChange={setSearchQuery}
       />
 
-      <div className="flex items-center justify-between mb-6 border-b border-gray-200 pb-4">
-        <h2 className="text-xl font-semibold text-gray-900">Results</h2>
-        <p className="text-sm text-gray-500 font-medium bg-gray-100 px-3 py-1 rounded-full">
+      <div className="flex items-center justify-between mb-6 border-b border-white/20 pb-4">
+        <h2 className="text-xl font-semibold text-white">Results</h2>
+        <p className="text-sm text-slate-200 font-medium bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
           Showing {filtered.length} of {allProfiles.length}
         </p>
       </div>
