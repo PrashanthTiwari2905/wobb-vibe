@@ -19,7 +19,7 @@ export function Button({
   const baseStyles = "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed";
   
   const variants = {
-    primary: "bg-gradient-to-r from-fuchsia-500 to-purple-600 text-white hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(192,38,211,0.5)] active:scale-95",
+    primary: "bg-gradient-to-r from-violet-500 to-purple-600 text-white hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(139,92,246,0.5)] active:scale-95",
     secondary: "bg-white/10 text-white hover:bg-white/20 border border-white/20 active:bg-white/30",
     destructive: "bg-white/10 text-white hover:bg-white/20 border border-white/30 active:bg-white/30",
     outline: "border border-white/30 text-white hover:bg-white/10 active:bg-white/20",

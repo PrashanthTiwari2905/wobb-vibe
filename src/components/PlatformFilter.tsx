@@ -17,7 +17,7 @@ export function PlatformFilter({
   onSearchChange,
 }: PlatformFilterProps) {
   return (
-    <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white/10 backdrop-blur-md p-4 rounded-xl shadow-lg border border-white/20 mb-8">
+    <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white/15 backdrop-blur-md p-4 rounded-xl shadow-lg border border-white/20 mb-8">
       <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 hide-scrollbar">
         {PLATFORMS.map((p) => (
           <Button

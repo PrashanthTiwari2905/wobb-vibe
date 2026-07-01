@@ -13,7 +13,7 @@ export function ShortlistPage() {
 
   return (
     <Layout title="My Shortlist">
-      <p className="text-slate-300 text-lg mb-10 max-w-2xl font-light leading-relaxed">
+      <p className="text-white/70 text-lg mb-10 max-w-2xl font-light leading-relaxed">
         Manage the creators you've saved for your upcoming campaigns.
       </p>
 
