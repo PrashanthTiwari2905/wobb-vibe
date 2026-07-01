@@ -42,7 +42,7 @@ This repository contains a comprehensive refactor of an Influencer Discovery Rea
 ## Assumptions Made
 
 - **Data Immutability**: It was assumed the static JSON dataset acts as a mock API. Therefore, simulated network delays were introduced to demonstrate asynchronous loading states (spinners).
-- **Session Persistence**: The "Add to List" functionality was built for in-memory session persistence. It was assumed that persisting to `localStorage` or a database was outside the scope of the immediate assignment requirements.
+- **Session Persistence**: The "Add to List" functionality utilizes Zustand's `persist` middleware to automatically save selections to `localStorage`. It was assumed that a backend database for cross-device cloud synchronization was outside the scope of the immediate assignment requirements.
 
 ---
 
@@ -56,6 +56,6 @@ This repository contains a comprehensive refactor of an Influencer Discovery Rea
 ## Remaining Improvements (With More Time)
 
 1. **List Virtualization**: For massive datasets, implementing `react-window` or `react-virtuoso` on the `ProfileList` would drastically reduce the number of DOM nodes, ensuring perfectly smooth 60fps scrolling regardless of list size.
-2. **Persistent Storage**: Sync the Zustand shortlist state to `localStorage` or `sessionStorage` so user selections survive a hard page refresh.
+2. **Cloud Sync / Backend Persistence**: Sync the Zustand shortlist state to a backend database so user selections persist across different devices and accounts, rather than just locally in the browser's `localStorage`.
 3. **Automated Testing**: Introduce **Jest** + **React Testing Library** for unit testing critical utility functions (like `filterProfiles` and `extractProfiles`), and use **Playwright** or **Cypress** to establish E2E tests for the "Add to List" user flow.
 4. **Image Lazy Loading**: Avatar images currently load immediately. Applying `loading="lazy"` on profile images would save significant initial bandwidth when loading the dashboard grid.
