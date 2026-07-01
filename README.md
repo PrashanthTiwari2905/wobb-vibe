@@ -1,5 +1,8 @@
 # Influencer Discovery Platform - Refactor & Modernization
 
+## Live Demo
+https://wobb-vibe.vercel.app
+
 This repository contains a comprehensive refactor of an Influencer Discovery React application. The objective of this assignment was to audit an existing broken codebase, resolve critical bugs, implement missing features, modernize the UI, and heavily optimize the application for both code quality and rendering performance.
 
 ## What Was Changed & Why
