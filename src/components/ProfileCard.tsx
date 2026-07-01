@@ -43,10 +43,10 @@ export const ProfileCard = React.memo(function ProfileCard({
         </div>
         <div className="text-center mb-4">
           <div className="font-bold text-lg text-white flex items-center justify-center gap-1">
-            <span className="truncate max-w-[180px] drop-shadow-sm">@{profile.username}</span>
+            <span className="truncate max-w-[180px] drop-shadow-sm">{profile.username ? `@${profile.username}` : "Unknown Creator"}</span>
             <VerifiedBadge verified={profile.is_verified} />
           </div>
-          <div className="text-sm text-slate-300 mt-1 line-clamp-1">{profile.fullname}</div>
+          <div className="text-sm text-slate-300 mt-1 line-clamp-1">{profile.fullname || "Unknown Creator"}</div>
         </div>
         
         <div className="w-full grid grid-cols-2 gap-2 text-center bg-black/20 p-3 rounded-lg mt-auto mb-4 border border-white/10 backdrop-blur-sm">

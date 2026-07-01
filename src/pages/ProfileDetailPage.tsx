@@ -142,11 +142,11 @@ export function ProfileDetailPage() {
           <Card className="p-6">
             <h3 className="text-lg font-semibold text-white mb-4">About</h3>
             <p className="text-slate-200 whitespace-pre-wrap leading-relaxed font-light">
-              {user.description || "No bio provided."}
+              {user.description || <span className="italic text-white/40">No bio provided.</span>}
             </p>
           </Card>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <Card className="p-4 text-center">
               <div className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-1">Followers</div>
               <div className="text-2xl font-bold text-white">{formatFollowers(displayFollowers)}</div>
@@ -186,7 +186,7 @@ export function ProfileDetailPage() {
             )}
             
             {user.engagements !== undefined && (
-              <Card className="p-4 text-center sm:col-span-3">
+              <Card className="p-4 text-center col-span-2">
                 <div className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-1">Total Engagements</div>
                 <div className="text-2xl font-bold text-white">{formatFollowers(user.engagements)}</div>
               </Card>

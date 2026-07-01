@@ -40,10 +40,10 @@ export function ShortlistPage() {
                 </div>
                 <div className="text-center mb-4">
                   <Link to={`/profile/${profile.username || profile.user_id}`} className="font-bold text-lg text-white hover:text-fuchsia-300 transition-colors flex items-center justify-center gap-1 drop-shadow-sm">
-                    <span className="truncate max-w-[180px]">@{profile.username}</span>
+                    <span className="truncate max-w-[180px]">{profile.username ? `@${profile.username}` : "Unknown Creator"}</span>
                     <VerifiedBadge verified={profile.is_verified} />
                   </Link>
-                  <div className="text-sm text-slate-300 mt-1 line-clamp-1">{profile.fullname}</div>
+                  <div className="text-sm text-slate-300 mt-1 line-clamp-1">{profile.fullname || "Unknown Creator"}</div>
                 </div>
                 
                 <div className="w-full text-center bg-black/20 p-3 rounded-lg mt-auto mb-4 border border-white/10 backdrop-blur-sm">
